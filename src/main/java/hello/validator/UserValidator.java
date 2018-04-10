@@ -8,6 +8,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import java.util.Objects;
+
 @Component
 @AllArgsConstructor
 public class UserValidator implements Validator {
@@ -28,7 +30,7 @@ public class UserValidator implements Validator {
 		if (user.getUsername().length() < MIN_LENGTH || user.getUsername().length() > MAX_LENGTH) {
 			errors.rejectValue("username", "");
 		}
-		if (userService.findByUsername(user.getUsername()) != null) {
+		if (Objects.nonNull(userService.findByUsername(user.getUsername()))) {
 			errors.rejectValue("username", "");
 		}
 

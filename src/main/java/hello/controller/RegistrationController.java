@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/registration")
@@ -40,7 +41,7 @@ class RegistrationController {
 		}
 
 		User existing = userService.findByUsername(userDto.getUsername());
-		if (existing != null) {
+		if (Objects.nonNull(existing)) {
 			result.rejectValue("email", null, "There is already an account registered with that email");
 		}
 

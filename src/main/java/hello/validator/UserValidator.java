@@ -12,6 +12,9 @@ import org.springframework.validation.Validator;
 @AllArgsConstructor
 public class UserValidator implements Validator {
 
+	private static final int MIN_LENGTH = 6;
+	private static final int MAX_LENGTH = 32;
+
 	@Override
 	public boolean supports(Class<?> aClass) {
 		return UserDTO.class.equals(aClass);
@@ -38,9 +41,6 @@ public class UserValidator implements Validator {
 			errors.rejectValue("passwordConfirm", "");
 		}
 	}
-
-	private static final int MIN_LENGTH = 6;
-	private static final int MAX_LENGTH = 32;
 
 	private UserService userService;
 }

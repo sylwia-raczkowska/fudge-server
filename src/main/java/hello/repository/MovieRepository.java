@@ -1,6 +1,6 @@
 package hello.repository;
 
-import hello.model.Movie;
+import hello.model.movielens.Movie;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package hello.model;
+package hello.model.movielens;
 
 import lombok.Builder;
 import lombok.Data;
@@ -6,7 +6,6 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
 @Entity
 @Data
 @Builder

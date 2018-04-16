@@ -1,16 +1,15 @@
 package hello.controller;
 
-import hello.model.Movie;
+import hello.model.movielens.Movie;
 import hello.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping("/movie")
+@RestController
+@RequestMapping("/movies")
 public class MovieController {
     private MovieRepository movieRepository;
 
@@ -19,7 +18,7 @@ public class MovieController {
         this.movieRepository = movieRepository;
     }
 
-    @GetMapping(path = "/{movieId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping("/{movieId}")
     public Movie getMovie(@PathVariable Integer movieId) {
         return movieRepository.findOne(movieId);
     }

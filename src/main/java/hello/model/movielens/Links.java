@@ -1,4 +1,4 @@
-package hello.model;
+package hello.model.movielens;
 
 import lombok.Builder;
 import lombok.Data;

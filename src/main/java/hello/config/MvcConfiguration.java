@@ -10,19 +10,18 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 @Configuration
 class MvcConfiguration extends WebMvcConfigurerAdapter {
 
-	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addViewController("/home").setViewName("home");
-		registry.addViewController("/").setViewName("home");
-		registry.addViewController("/hello").setViewName("hello");
-		registry.addViewController("/login").setViewName("login");
-	}
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/home").setViewName("home");
+        registry.addViewController("/hello").setViewName("hello");
+        registry.addViewController("/login").setViewName("login");
+    }
 
-	@Bean
-	public TemplateResolver templateResolver() {
-		TemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-		templateResolver.setPrefix("template/");
-		templateResolver.setSuffix(".html");
-		templateResolver.setTemplateMode("HTML5");
-		return templateResolver;
-	}
+    @Bean
+    public TemplateResolver templateResolver() {
+        TemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setPrefix("template/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode("HTML5");
+        return templateResolver;
+    }
 }

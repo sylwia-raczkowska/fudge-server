@@ -52,9 +52,9 @@ class RegistrationController {
 		userService.save(userDto);
 		return "redirect:/registration?success";
 	}
-	@Autowired
+
 	private UserService userService;
-	@Autowired
+
 	private UserValidator userValidator;
 
 }

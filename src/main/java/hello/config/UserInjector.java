@@ -25,14 +25,4 @@ class UserInjector {
 		auth.setPasswordEncoder(passwordEncoder);
 		return auth;
 	}
-
-	@Autowired
-	UserService userService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
-		return new UserServiceImpl(userRepository, passwordEncoder);
-	}
-
-	@Autowired
-	UserValidator userValidator(UserService userService) {
-		return new UserValidator(userService);
-	}
 }

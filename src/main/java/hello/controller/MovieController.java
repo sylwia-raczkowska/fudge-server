@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,29 +36,29 @@ public class MovieController {
         this.ratingsRepository = ratingsRepository;
     }
 
-    @RequestMapping
+    @GetMapping
     public Page<Movie> getMovies(Pageable pageable) {
         return movieRepository.findAll(pageable);
     }
 
-    @RequestMapping("/{movieId}")
+    @GetMapping("/{movieId}")
     public Movie getMovie(@PathVariable Integer movieId) {
         return movieRepository.findOne(movieId);
     }
 
-    @RequestMapping(value = "/{movieId}/details", produces = "application/json")
+    @GetMapping(value = "/{movieId}/details", produces = "application/json")
     public String getMovieDetails(@PathVariable Integer movieId) {
         String apiKey = env.getProperty("omdb.key");
         String imdbId = getMovie(movieId).getLinks().getImdbId();
         return restTemplate.getForObject("http://www.omdbapi.com/?i=tt0" + imdbId + "&apikey=" + apiKey, String.class);
     }
 
-    @RequestMapping("/{movieId}/ratings")
+    @GetMapping("/{movieId}/ratings")
     public List<Rating> getRatings(@PathVariable Integer movieId) {
         return ratingsRepository.findAllByRatingKey_MovieId(movieId);
     }
 
-    @RequestMapping("/{movieId}/ratings/average")
+    @GetMapping("/{movieId}/ratings/average")
     public Pair<Double, Integer> getAverageRatings(@PathVariable Integer movieId) {
         List<Rating> ratings = ratingsRepository.findAllByRatingKey_MovieId(movieId);
         OptionalDouble optionalAverage = ratings.stream().mapToDouble(Rating::getRating).average();

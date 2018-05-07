@@ -3,7 +3,6 @@ package hello.config;
 import hello.repository.UserRepository;
 import hello.service.UserService;
 import hello.service.UserServiceImpl;
-import hello.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,10 +28,5 @@ class UserInjector {
 	@Autowired
 	UserService userService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
 		return new UserServiceImpl(userRepository, passwordEncoder);
-	}
-
-	@Autowired
-	UserValidator userValidator(UserService userService) {
-		return new UserValidator(userService);
 	}
 }

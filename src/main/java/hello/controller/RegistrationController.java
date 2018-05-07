@@ -1,60 +1,55 @@
 package hello.controller;
 
 import hello.model.User;
-import hello.model.UserDTO;
+import hello.payload.AuthResponse;
+import hello.payload.SignUpRequest;
+import hello.repository.UserRepository;
 import hello.service.UserService;
-import hello.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.Objects;
 
-@Controller
-@RequestMapping("/registration")
+@RestController
+@RequestMapping("/auth")
 class RegistrationController {
 
-	@ModelAttribute("user")
-	public UserDTO userRegistrationDto() {
-		return new UserDTO();
-	}
 
-	@GetMapping
-	public String showRegistrationForm(Model model) {
-		return "registration";
-	}
+	@PostMapping("/register")
+	public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
 
-	@PostMapping
-	public String registerUserAccount(@ModelAttribute("user") @Valid UserDTO userDto,
-	                                  BindingResult result) {
-
-		userValidator.validate(userDto, result);
-
-		if (result.hasErrors()) {
-			return "registration";
+		if (Objects.nonNull(userRepository.findByUsername(signUpRequest.getUsername()))) {
+			return new ResponseEntity(new AuthResponse(false, "Username is already taken!"),
+					HttpStatus.BAD_REQUEST);
 		}
 
-		User existing = userService.findByUsername(userDto.getUsername());
-		if (Objects.nonNull(existing)) {
-			result.rejectValue("email", null, "There is already an account registered with that email");
+		if (Objects.nonNull(userRepository.findByEmail(signUpRequest.getEmail()))) {
+			return new ResponseEntity(new AuthResponse(false, "Email sddress already in use!"),
+					HttpStatus.BAD_REQUEST);
 		}
 
-		if (result.hasErrors()) {
-			return "registration";
-		}
+		User user = userService.registerUser(signUpRequest);
 
-		userService.save(userDto);
-		return "redirect:/registration?success";
+		URI location = ServletUriComponentsBuilder
+				.fromCurrentContextPath().path("/users/{username}")
+				.buildAndExpand(user.getUsername()).toUri();
+
+		return ResponseEntity.created(location).body(new AuthResponse(true, "User registered successfully"));
 	}
+
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private UserValidator userValidator;
+	private UserRepository userRepository;
+
 
 }

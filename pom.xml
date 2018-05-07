@@ -101,6 +101,11 @@
             <version>1.16.20</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.2</version>
+        </dependency>
 
     </dependencies>
 

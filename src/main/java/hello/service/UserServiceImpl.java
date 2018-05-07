@@ -1,7 +1,7 @@
 package hello.service;
 
 import hello.model.User;
-import hello.model.UserDTO;
+import hello.payload.SignUpRequest;
 import hello.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,16 +17,11 @@ import java.util.Collections;
 public class UserServiceImpl implements UserService {
 
 	@Override
-	public User findByUsername(String username) {
-		return userRepository.findByUsername(username);
-	}
-
-	@Override
-	public User save(UserDTO userDTO) {
+	public User registerUser(SignUpRequest request) {
 		User user = User.builder()
-				.email(userDTO.getEmail())
-				.password(passwordEncoder.encode(userDTO.getPassword()))
-				.username(userDTO.getUsername())
+				.email(request.getEmail())
+				.password(passwordEncoder.encode(request.getPassword()))
+				.username(request.getUsername())
 				.build();
 		return userRepository.save(user);
 	}

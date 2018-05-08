@@ -27,11 +27,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByUsername(username);
-		if (user == null) {
-			throw new UsernameNotFoundException("Invalid username or password.");
-		}
+	public UserDetails loadUserByUsername(String email) {
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with email : " + email));
+
 		return new org.springframework.security.core.userdetails.User(user.getUsername(),
 				user.getPassword(),
 				Collections.singleton(new SimpleGrantedAuthority("USER_ROLE")));

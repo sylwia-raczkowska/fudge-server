@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Slf4j
 @Component
-class JwtTokenProvider {
+public class JwtTokenProvider {
 
 
 	public String generateToken(Authentication authentication) {
@@ -30,7 +30,7 @@ class JwtTokenProvider {
 				.compact();
 	}
 
-	public String getUsernameFromToken(String token) {
+	String getUsernameFromToken(String token) {
 		Claims claims = Jwts.parser()
 				.setSigningKey(secretKey)
 				.parseClaimsJws(token)
@@ -39,7 +39,7 @@ class JwtTokenProvider {
 		return claims.getSubject();
 	}
 
-	public boolean validateToken(String authToken) {
+	boolean validateToken(String authToken) {
 		try {
 			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
 			return true;

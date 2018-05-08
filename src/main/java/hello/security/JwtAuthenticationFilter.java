@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -42,6 +42,7 @@ class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	private static final String AUTH_HEADER = "Authorization";
+
 	private static final String BEARER_HEADER = "Bearer ";
 
 	private String getTokenFromRequest(HttpServletRequest request) {

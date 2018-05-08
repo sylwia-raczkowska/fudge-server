@@ -2,13 +2,19 @@ package hello.controller;
 
 import hello.model.User;
 import hello.payload.AuthResponse;
+import hello.payload.AuthenticationResponse;
+import hello.payload.LoginRequest;
 import hello.payload.SignUpRequest;
 import hello.repository.UserRepository;
+import hello.security.JwtTokenProvider;
 import hello.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +39,7 @@ class RegistrationController {
 		}
 
 		if (Objects.nonNull(userRepository.findByEmail(signUpRequest.getEmail()))) {
-			return new ResponseEntity(new AuthResponse(false, "Email sddress already in use!"),
+			return new ResponseEntity(new AuthResponse(false, "Email address already in use!"),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -46,6 +52,26 @@ class RegistrationController {
 		return ResponseEntity.created(location).body(new AuthResponse(true, "User registered successfully"));
 	}
 
+	@PostMapping("/login")
+	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(
+						loginRequest.getEmail(),
+						loginRequest.getPassword()
+				)
+		);
+
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+
+		String token = tokenProvider.generateToken(authentication);
+		return ResponseEntity.ok(new AuthenticationResponse(token));
+	}
+
+	@Autowired
+	private JwtTokenProvider tokenProvider;
+	@Autowired
+	private AuthenticationManager authenticationManager;
 	@Autowired
 	private UserService userService;
 	@Autowired

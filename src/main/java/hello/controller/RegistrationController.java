@@ -8,6 +8,7 @@ import hello.payload.SignUpRequest;
 import hello.repository.UserRepository;
 import hello.security.JwtTokenProvider;
 import hello.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,22 +24,22 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/auth")
+@Slf4j
 class RegistrationController {
 
 
 	@PostMapping("/register")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-
-		if (Objects.nonNull(userRepository.findByUsername(signUpRequest.getUsername()))) {
+		log.info("Signup Request: {}", signUpRequest);
+		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return new ResponseEntity(new AuthResponse(false, "Username is already taken!"),
 					HttpStatus.BAD_REQUEST);
 		}
 
-		if (Objects.nonNull(userRepository.findByEmail(signUpRequest.getEmail()))) {
+		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
 			return new ResponseEntity(new AuthResponse(false, "Email address already in use!"),
 					HttpStatus.BAD_REQUEST);
 		}

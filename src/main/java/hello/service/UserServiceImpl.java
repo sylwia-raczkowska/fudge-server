@@ -4,6 +4,7 @@ import hello.model.User;
 import hello.payload.SignUpRequest;
 import hello.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,10 +15,12 @@ import java.util.Collections;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
 	@Override
 	public User registerUser(SignUpRequest request) {
+		log.info("registerUser : {}", request);
 		User user = User.builder()
 				.email(request.getEmail())
 				.password(passwordEncoder.encode(request.getPassword()))

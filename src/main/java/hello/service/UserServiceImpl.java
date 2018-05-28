@@ -12,37 +12,39 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+import static java.util.Objects.isNull;
+
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
+    private UserRepository userRepository;
 
-	@Override
-	public User findByUsername(String username) {
-		return userRepository.findByUsername(username);
-	}
+    private BCryptPasswordEncoder passwordEncoder;
 
-	@Override
-	public User save(UserDTO userDTO) {
-		User user = User.builder()
-				.email(userDTO.getEmail())
-				.password(passwordEncoder.encode(userDTO.getPassword()))
-				.username(userDTO.getUsername())
-				.build();
-		return userRepository.save(user);
-	}
+    @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 
-	@Override
-	public UserDetails loadUserByUsername(String username) {
-		User user = userRepository.findByUsername(username);
-		if (user == null) {
-			throw new UsernameNotFoundException("Invalid username or password.");
-		}
-		return new org.springframework.security.core.userdetails.User(user.getUsername(),
-				user.getPassword(),
-				Collections.singleton(new SimpleGrantedAuthority("USER_ROLE")));
-	}
+    @Override
+    public User save(UserDTO userDTO) {
+        User user = User.builder()
+                .email(userDTO.getEmail())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
+                .username(userDTO.getUsername())
+                .build();
+        return userRepository.save(user);
+    }
 
-	private UserRepository userRepository;
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        if (isNull(user)) {
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),
+                user.getPassword(),
+                Collections.singleton(new SimpleGrantedAuthority("USER_ROLE")));
+    }
 
-	private BCryptPasswordEncoder passwordEncoder;
 }

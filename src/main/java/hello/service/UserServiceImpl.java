@@ -13,11 +13,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+import static java.util.Objects.isNull;
+
 @Service
 @AllArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
-
+  private UserRepository userRepository;
+	private BCryptPasswordEncoder passwordEncoder;
+  
 	@Override
 	public User registerUser(SignUpRequest request) {
 		log.info("registerUser : {}", request);
@@ -38,8 +42,4 @@ public class UserServiceImpl implements UserService {
 				user.getPassword(),
 				Collections.singleton(new SimpleGrantedAuthority("USER_ROLE")));
 	}
-
-	private UserRepository userRepository;
-
-	private BCryptPasswordEncoder passwordEncoder;
 }

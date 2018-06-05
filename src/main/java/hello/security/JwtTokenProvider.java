@@ -12,7 +12,10 @@ import java.util.Date;
 @Slf4j
 @Component
 public class JwtTokenProvider {
-
+	@Value("${app.jwpKey}")
+	private String secretKey;
+	@Value("${app.expirationInMs}")
+	private int expirationInMs;
 
 	public String generateToken(Authentication authentication) {
 
@@ -55,11 +58,4 @@ public class JwtTokenProvider {
 		}
 		return false;
 	}
-
-	@Value("${app.jwpKey}")
-	private String secretKey;
-	@Value("${app.expirationInMs}")
-	private int expirationInMs;
-
-
 }

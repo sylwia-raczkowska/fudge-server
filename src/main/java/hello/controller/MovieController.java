@@ -8,10 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 public class MovieController {
     private MovieService movieService;
-    private RatingsService ratingsService;
 
     @GetMapping
     public Page<Movie> getMovies(Pageable pageable) {
@@ -37,13 +33,4 @@ public class MovieController {
         return movieService.getMovieDetails(movieId);
     }
 
-    @GetMapping("/{movieId}/ratings")
-    public List<Rating> getRatings(@PathVariable Integer movieId) {
-        return ratingsService.getRatings(movieId);
-    }
-
-    @GetMapping("/{movieId}/ratings/average")
-    public Pair<Double, Integer> getAverageRatings(@PathVariable Integer movieId) {
-        return ratingsService.getAverageRatings(movieId);
-    }
 }

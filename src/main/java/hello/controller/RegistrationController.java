@@ -29,7 +29,14 @@ import java.net.URI;
 @RequestMapping("/auth")
 @Slf4j
 class RegistrationController {
-
+	@Autowired
+	private JwtTokenProvider tokenProvider;
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private UserRepository userRepository;
 
 	@PostMapping("/register")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
@@ -68,15 +75,4 @@ class RegistrationController {
 		String token = tokenProvider.generateToken(authentication);
 		return ResponseEntity.ok(new AuthenticationResponse(token));
 	}
-
-	@Autowired
-	private JwtTokenProvider tokenProvider;
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private UserRepository userRepository;
-
-
 }

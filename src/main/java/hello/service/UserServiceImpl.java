@@ -1,9 +1,10 @@
 package hello.service;
 
 import hello.model.User;
-import hello.model.UserDTO;
+import hello.payload.SignUpRequest;
 import hello.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,35 +17,29 @@ import static java.util.Objects.isNull;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
-    private UserRepository userRepository;
+  private UserRepository userRepository;
+	private BCryptPasswordEncoder passwordEncoder;
+  
+	@Override
+	public User registerUser(SignUpRequest request) {
+		log.info("registerUser : {}", request);
+		User user = User.builder()
+				.email(request.getEmail())
+				.password(passwordEncoder.encode(request.getPassword()))
+				.username(request.getUsername())
+				.build();
+		return userRepository.save(user);
+	}
 
-    private BCryptPasswordEncoder passwordEncoder;
+	@Override
+	public UserDetails loadUserByUsername(String email) {
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with email : " + email));
 
-    @Override
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    @Override
-    public User save(UserDTO userDTO) {
-        User user = User.builder()
-                .email(userDTO.getEmail())
-                .password(passwordEncoder.encode(userDTO.getPassword()))
-                .username(userDTO.getUsername())
-                .build();
-        return userRepository.save(user);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        if (isNull(user)) {
-            throw new UsernameNotFoundException("Invalid username or password.");
-        }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),
-                user.getPassword(),
-                Collections.singleton(new SimpleGrantedAuthority("USER_ROLE")));
-    }
-
+		return new org.springframework.security.core.userdetails.User(user.getUsername(),
+				user.getPassword(),
+				Collections.singleton(new SimpleGrantedAuthority("USER_ROLE")));
+	}
 }

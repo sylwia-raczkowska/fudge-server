@@ -1,6 +1,6 @@
 package fudge.controller;
 
-import fudge.model.movielens.Rating;
+import fudge.model.rating.Rating;
 import fudge.payload.RatingRequest;
 import fudge.service.RatingsService;
 import lombok.AllArgsConstructor;

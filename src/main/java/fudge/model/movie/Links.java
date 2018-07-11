@@ -1,4 +1,4 @@
-package fudge.model.movielens;
+package fudge.model.movie;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

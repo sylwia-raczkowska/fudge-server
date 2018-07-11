@@ -1,6 +1,7 @@
 package fudge.service;
 
-import fudge.model.movielens.Movie;
+import fudge.model.movie.Details;
+import fudge.model.movie.Movie;
 import fudge.repository.MovieRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -8,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -23,14 +26,19 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie getMovie(Integer movieId) {
-        return movieRepository.findOne(movieId);
+        Movie movie = movieRepository.findOne(movieId);
+        if (Objects.isNull(movie.getDetails())){
+            String imdbId = movie.getLinks().getImdbId();
+            Details details = getMovieDetails(imdbId);
+            if ("True".equals(details.getResponse()))
+                movie.setDetails(details);
+        }
+        return movie;
     }
 
-    @Override
-    public String getMovieDetails(Integer movieId) {
+    private Details getMovieDetails(String imdbId) {
         String apiKey = env.getProperty("omdb.key");
-        String imdbId = getMovie(movieId).getLinks().getImdbId();
-        return restTemplate.getForObject("http://www.omdbapi.com/?i=tt0" + imdbId + "&apikey=" + apiKey, String.class);
+        return restTemplate.getForObject("http://www.omdbapi.com/?i=tt0" + imdbId + "&apikey=" + apiKey, Details.class);
     }
 
 }

@@ -1,10 +1,20 @@
 server:
-  port: 8080
+  port: 8090
 
-#TODO: figure out why I need this here and in bootstrap.yml
 spring:
   application:
     name: testLatticeApp
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://fudge.nazwa.pl:5432/fudge
+    username: postgres
+    password: cwaniakSQL12
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
 
 ribbon:
   ServerListRefreshInterval: 1000
@@ -16,3 +26,10 @@ endpoints:
     enabled: true
   shutdown:
     enabled: true
+
+omdb:
+  key: 4f713a16
+
+app:
+  jwpKey: Cwaniaki123
+  expirationInMs: 604800000

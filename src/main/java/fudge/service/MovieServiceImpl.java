@@ -25,22 +25,30 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Page<Movie> getMovies(Pageable pageable) {
+        Page<Movie> page = movieRepository.findAll(pageable);
+        page.forEach(movie -> {
+            if (Objects.isNull(movie.getDetails()))
+                setMovieDetails(movie);
+        });
         return movieRepository.findAll(pageable);
     }
 
     @Override
     public Movie getMovie(Integer movieId) {
         Movie movie = movieRepository.findOne(movieId);
-        if (Objects.isNull(movie.getDetails())){
-            String imdbId = movie.getLinks().getImdbId();
-            Details details = getMovieDetails(imdbId);
-            if ("True".equals(details.getResponse())) {
-                details.setMovieId(movieId);
-                saveMovieDetails(details);
-                movie.setDetails(details);
-            }
-        }
+        if (Objects.isNull(movie.getDetails()))
+            setMovieDetails(movie);
         return movie;
+    }
+
+    private void setMovieDetails(Movie movie) {
+        String imdbId = movie.getLinks().getImdbId();
+        Details details = getMovieDetails(imdbId);
+        if ("True".equals(details.getResponse())) {
+            details.setMovieId(movie.getMovieId());
+            saveMovieDetails(details);
+            movie.setDetails(details);
+        }
     }
 
     private Details getMovieDetails(String imdbId) {

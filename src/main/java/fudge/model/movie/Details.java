@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Data
@@ -41,6 +42,7 @@ public class Details {
     private String production;
     @JsonProperty("Website")
     private String website;
+    @Transient
     @JsonProperty(value = "Response", access = JsonProperty.Access.WRITE_ONLY)
     private String response;
 }

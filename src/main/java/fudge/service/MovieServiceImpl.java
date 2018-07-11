@@ -18,6 +18,11 @@ import java.util.Objects;
 @AllArgsConstructor
 @Slf4j
 public class MovieServiceImpl implements MovieService {
+    public static final String APIKEY = "&apikey=";
+    public static final String BASE_URL = "http://www.omdbapi.com/?i=tt";
+    public static final String OMDB_KEY = "omdb.key";
+    public static final String ZEROS = "0000000";
+    public static final String TRUE = "True";
     private MovieRepository movieRepository;
     private MovieDetailsRepository detailsRepository;
     private Environment env;
@@ -44,7 +49,7 @@ public class MovieServiceImpl implements MovieService {
     private void setMovieDetails(Movie movie) {
         String imdbId = movie.getLinks().getImdbId();
         Details details = getMovieDetails(imdbId);
-        if ("True".equals(details.getResponse())) {
+        if (TRUE.equals(details.getResponse())) {
             details.setMovieId(movie.getMovieId());
             saveMovieDetails(details);
             movie.setDetails(details);
@@ -52,11 +57,20 @@ public class MovieServiceImpl implements MovieService {
     }
 
     private Details getMovieDetails(String imdbId) {
-        String apiKey = env.getProperty("omdb.key");
-        return restTemplate.getForObject("http://www.omdbapi.com/?i=tt0" + imdbId + "&apikey=" + apiKey, Details.class);
+        String apiKey = env.getProperty(OMDB_KEY);
+        String formattedImdbId = (ZEROS + imdbId).substring(imdbId.length());
+
+        String url = new StringBuilder()
+                .append(BASE_URL)
+                .append(formattedImdbId)
+                .append(APIKEY)
+                .append(apiKey)
+                .toString();
+
+        return restTemplate.getForObject(url, Details.class);
     }
 
-    private void saveMovieDetails (Details movieDetails) {
+    private void saveMovieDetails(Details movieDetails) {
         log.info("Add " + movieDetails);
         detailsRepository.save(movieDetails);
         detailsRepository.flush();

@@ -5,7 +5,10 @@ import fudge.service.MovieService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/movies")
@@ -18,6 +21,11 @@ public class MovieController {
         return movieService.getMovies(pageable);
     }
 
+    @GetMapping("/title/{title}")
+    public Page<Movie> findMoviesByTitle(@PathVariable String title, Pageable pageable) {
+        return movieService.findMoviesByTitle(title, pageable);
+    }
+
     @GetMapping("/{movieId}")
     public Movie getMovie(@PathVariable Integer movieId) {
         return movieService.getMovie(movieId);
@@ -27,5 +35,4 @@ public class MovieController {
     public String getMovieDetails(@PathVariable Integer movieId) {
         return movieService.getMovieDetails(movieId);
     }
-
 }

@@ -1,4 +1,4 @@
-package fudge.model.movielens;
+package fudge.model.rating;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

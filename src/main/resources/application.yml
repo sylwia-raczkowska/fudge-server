@@ -16,6 +16,12 @@ spring:
     hibernate:
       ddl-auto: update
 
+logging:
+    level:
+      org.springframework.web: DEBUG
+      guru.springframework.controllers: DEBUG
+      org.hibernate: DEBUG
+
 ribbon:
   ServerListRefreshInterval: 1000
 

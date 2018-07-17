@@ -1,6 +1,6 @@
 package fudge.service;
 
-import fudge.model.movielens.Rating;
+import fudge.model.rating.Rating;
 import fudge.payload.RatingRequest;
 import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;

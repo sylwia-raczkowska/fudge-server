@@ -1,7 +1,7 @@
 package fudge.service;
 
-import fudge.model.movielens.Rating;
-import fudge.model.movielens.RatingKey;
+import fudge.model.rating.Rating;
+import fudge.model.rating.RatingKey;
 import fudge.payload.RatingRequest;
 import fudge.repository.RatingsRepository;
 import lombok.AllArgsConstructor;

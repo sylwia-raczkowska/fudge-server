@@ -1,6 +1,6 @@
 package fudge.controller;
 
-import fudge.model.movielens.Movie;
+import fudge.model.movie.Movie;
 import fudge.service.MovieService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,10 +29,5 @@ public class MovieController {
     @GetMapping("/{movieId}")
     public Movie getMovie(@PathVariable Integer movieId) {
         return movieService.getMovie(movieId);
-    }
-
-    @GetMapping(value = "/{movieId}/details", produces = "application/json")
-    public String getMovieDetails(@PathVariable Integer movieId) {
-        return movieService.getMovieDetails(movieId);
     }
 }

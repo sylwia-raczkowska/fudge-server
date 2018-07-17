@@ -1,7 +1,7 @@
 package fudge.repository;
 
-import fudge.model.movielens.Rating;
-import fudge.model.movielens.RatingKey;
+import fudge.model.rating.Rating;
+import fudge.model.rating.RatingKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

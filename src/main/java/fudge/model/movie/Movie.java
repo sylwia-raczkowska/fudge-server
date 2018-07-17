@@ -1,4 +1,4 @@
-package fudge.model.movielens;
+package fudge.model.movie;
 
 import lombok.Data;
 
@@ -16,4 +16,8 @@ public class Movie {
     @OneToOne
     @PrimaryKeyJoinColumn
     private Links links;
+
+    @OneToOne
+    @PrimaryKeyJoinColumn
+    private Details details;
 }

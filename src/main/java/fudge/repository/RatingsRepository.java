@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface RatingsRepository extends JpaRepository<Rating, RatingKey> {
     List<Rating> findAllByRatingKey_MovieId(Integer movieId);
+    Rating findAllByRatingKey(RatingKey ratingKey);
+
 }

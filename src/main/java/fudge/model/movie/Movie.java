@@ -20,4 +20,7 @@ public class Movie {
     @OneToOne
     @PrimaryKeyJoinColumn
     private Details details;
+
+    @Transient
+    private Double userRate;
 }

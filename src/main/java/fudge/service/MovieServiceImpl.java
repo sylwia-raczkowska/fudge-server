@@ -2,41 +2,57 @@ package fudge.service;
 
 import fudge.model.movie.Details;
 import fudge.model.movie.Movie;
+import fudge.model.rating.Rating;
+import fudge.model.rating.RatingKey;
 import fudge.repository.MovieDetailsRepository;
 import fudge.repository.MovieRepository;
+import fudge.repository.RatingsRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
 
+import static java.lang.Math.toIntExact;
+
 @Service
 @AllArgsConstructor
 @Slf4j
 public class MovieServiceImpl implements MovieService {
-    public static final String APIKEY = "&apikey=";
-    public static final String BASE_URL = "http://www.omdbapi.com/?i=tt";
-    public static final String OMDB_KEY = "omdb.key";
-    public static final String ZEROS = "0000000";
-    public static final String TRUE = "True";
-    private MovieRepository movieRepository;
-    private MovieDetailsRepository detailsRepository;
-    private Environment env;
-    private RestTemplate restTemplate;
 
-    @Override
-    public Page<Movie> getMovies(Pageable pageable) {
-        Page<Movie> page = movieRepository.findAll(pageable);
-        page.forEach(movie -> {
-            if (Objects.isNull(movie.getDetails()))
-                setMovieDetails(movie);
-        });
-        return movieRepository.findAll(pageable);
-    }
+	private MovieRepository movieRepository;
+	private MovieDetailsRepository detailsRepository;
+	private Environment env;
+	private RestTemplate restTemplate;
+	private UserService userService;
+	private RatingsRepository ratingsRepository;
+	private static final String TRUE = "True";
+
+	@Override
+	public Page<Movie> getMovies(Pageable pageable) {
+		Page<Movie> page = movieRepository.findAll(pageable);
+		page.forEach(movie -> {
+			if (Objects.isNull(movie.getDetails()))
+				setMovieDetails(movie);
+		});
+		return movieRepository.findAll(pageable);
+	}
+
+	@Override
+	public Movie getMovie(Integer movieId) {
+		Movie movie = movieRepository.findOne(movieId);
+		fillMovieRate(movie);
+		if (Objects.isNull(movie.getDetails())) {
+			setMovieDetails(movie);
+		}
+		return movie;
+	}
 
     @Override
     public Page<Movie> findMoviesByTitle(String title, Pageable pageable) {
@@ -50,35 +66,52 @@ public class MovieServiceImpl implements MovieService {
             setMovieDetails(movie);
         return movie;
     }
+  
+	private static final String APIKEY = "&apikey=";
+	private static final String BASE_URL = "http://www.omdbapi.com/?i=tt";
+	private static final String OMDB_KEY = "omdb.key";
+	private static final String ZEROS = "0000000";
 
-    private void setMovieDetails(Movie movie) {
-        String imdbId = movie.getLinks().getImdbId();
-        Details details = getMovieDetails(imdbId);
-        if (TRUE.equals(details.getResponse())) {
-            details.setMovieId(movie.getMovieId());
-            saveMovieDetails(details);
-            movie.setDetails(details);
-        }
-    }
+	private void fillMovieRate(Movie movie) {
+		Long userId = null;
+		try {
+			String email = SecurityContextHolder.getContext().getAuthentication().getName();
+			userId = userService.findIdByEmail(email);
+		} catch (UsernameNotFoundException ex) {
+			log.info("Username not found");
+		}
+		Integer id = userId != null ? toIntExact(userId) : null;
+		Rating rating = ratingsRepository.findAllByRatingKey(new RatingKey(id, movie.getMovieId()));
+		movie.setUserRate(rating != null ? rating.getRating() : null);
+	}
 
-    private Details getMovieDetails(String imdbId) {
-        String apiKey = env.getProperty(OMDB_KEY);
-        String formattedImdbId = (ZEROS + imdbId).substring(imdbId.length());
+	private void setMovieDetails(Movie movie) {
+		String imdbId = movie.getLinks().getImdbId();
+		Details details = getMovieDetails(imdbId);
+		if (TRUE.equals(details.getResponse())) {
+			details.setMovieId(movie.getMovieId());
+			saveMovieDetails(details);
+			movie.setDetails(details);
+		}
+	}
 
-        String url = new StringBuilder()
-                .append(BASE_URL)
-                .append(formattedImdbId)
-                .append(APIKEY)
-                .append(apiKey)
-                .toString();
+	private Details getMovieDetails(String imdbId) {
+		String apiKey = env.getProperty(OMDB_KEY);
+		String formattedImdbId = (ZEROS + imdbId).substring(imdbId.length());
 
-        return restTemplate.getForObject(url, Details.class);
-    }
+		String url = new StringBuilder()
+				.append(BASE_URL)
+				.append(formattedImdbId)
+				.append(APIKEY)
+				.append(apiKey)
+				.toString();
 
-    private void saveMovieDetails(Details movieDetails) {
-        log.info("Add " + movieDetails);
-        detailsRepository.save(movieDetails);
-        detailsRepository.flush();
-    }
+		return restTemplate.getForObject(url, Details.class);
+	}
 
+	private void saveMovieDetails(Details movieDetails) {
+		log.info("Add " + movieDetails);
+		detailsRepository.save(movieDetails);
+		detailsRepository.flush();
+	}
 }

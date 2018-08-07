@@ -26,6 +26,7 @@ import static java.lang.Math.toIntExact;
 @AllArgsConstructor
 @Slf4j
 public class MovieServiceImpl implements MovieService {
+
 	private MovieRepository movieRepository;
 	private MovieDetailsRepository detailsRepository;
 	private Environment env;
@@ -48,12 +49,12 @@ public class MovieServiceImpl implements MovieService {
 		return movieRepository.findAll(pageable);
 	}
 
-	@Override
-	public ResponseEntity<Movie> getMovie(Integer movieId) {
-		Movie movie = movieRepository.findOne(movieId);
+    @Override
+    public ResponseEntity<Movie> getMovie(Integer movieId) {
+        Movie movie = movieRepository.findOne(movieId);
 
-		if (Objects.isNull(movie)) {
-		    return ResponseEntity.notFound().build();
+        if (Objects.isNull(movie)) {
+            return ResponseEntity.notFound().build();
         } else {
             fillMovieRate(movie);
             if (Objects.isNull(movie.getDetails())) {
@@ -61,7 +62,12 @@ public class MovieServiceImpl implements MovieService {
             }
             return ResponseEntity.ok(movie);
         }
-	}
+    }
+
+    @Override
+    public Page<Movie> findMoviesByTitle(String title, Pageable pageable) {
+        return movieRepository.findByTitleIgnoreCaseContaining(title, pageable);
+    }
 
 	private void fillMovieRate(Movie movie) {
 		Long userId = null;

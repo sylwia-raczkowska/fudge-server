@@ -8,5 +8,7 @@ import org.springframework.http.ResponseEntity;
 public interface MovieService {
     Page<Movie> getMovies(Pageable pageable);
 
+    Page<Movie> findMoviesByTitle(String title, Pageable pageable);
+
     ResponseEntity<Movie> getMovie(Integer movieId);
 }

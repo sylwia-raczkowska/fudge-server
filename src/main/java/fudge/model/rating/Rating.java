@@ -1,6 +1,5 @@
 package fudge.model.rating;
 
-import fudge.model.rating.RatingKey;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

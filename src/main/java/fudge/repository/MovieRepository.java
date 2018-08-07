@@ -1,6 +1,6 @@
 package fudge.repository;
 
-import fudge.model.movielens.Movie;
+import fudge.model.movie.Movie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

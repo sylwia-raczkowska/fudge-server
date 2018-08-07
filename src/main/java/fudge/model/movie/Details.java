@@ -6,12 +6,10 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
 @Data
-@Table(name = "movie_details")
 public class Details {
     @Id
     @JsonIgnore

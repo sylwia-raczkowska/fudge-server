@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface RatingsService {
-    List<Rating> getRatings(Integer movieId);
-
-    Pair<Double, Integer> getAverageRatings(Integer movieId);
+    ResponseEntity<List<Rating>> getRatings(Integer movieId);
 
     ResponseEntity saveRating(RatingRequest ratingRequest);
+
+    ResponseEntity<Pair<Double, Integer>> getAverageRatings(Integer movieId);
+
+    ResponseEntity<Double> getAverageRating(Integer movieId);
 }

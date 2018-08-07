@@ -21,6 +21,11 @@ public class MovieController {
         return movieService.getMovies(pageable);
     }
 
+    @GetMapping("/title/{title}")
+    public Page<Movie> findMoviesByTitle(@PathVariable String title, Pageable pageable) {
+        return movieService.findMoviesByTitle(title, pageable);
+    }
+
     @GetMapping("/{movieId}")
     public Movie getMovie(@PathVariable Integer movieId) {
         return movieService.getMovie(movieId);

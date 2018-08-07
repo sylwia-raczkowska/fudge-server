@@ -54,6 +54,19 @@ public class MovieServiceImpl implements MovieService {
 		return movie;
 	}
 
+    @Override
+    public Page<Movie> findMoviesByTitle(String title, Pageable pageable) {
+        return movieRepository.findByTitleIgnoreCaseContaining(title, pageable);
+    }
+
+    @Override
+    public Movie getMovie(Integer movieId) {
+        Movie movie = movieRepository.findOne(movieId);
+        if (Objects.isNull(movie.getDetails()))
+            setMovieDetails(movie);
+        return movie;
+    }
+  
 	private static final String APIKEY = "&apikey=";
 	private static final String BASE_URL = "http://www.omdbapi.com/?i=tt";
 	private static final String OMDB_KEY = "omdb.key";

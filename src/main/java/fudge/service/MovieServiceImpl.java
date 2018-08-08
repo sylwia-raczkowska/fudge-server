@@ -78,7 +78,7 @@ public class MovieServiceImpl implements MovieService {
             ResponseEntity.notFound().build();
         }
         List<Movie> topMovies = topAverageRatings.stream()
-                .map(a -> a.getMovieId())
+                .map(AverageRating::getMovieId)
                 .map(this::getMovie)
                 .map(HttpEntity::getBody)
                 .filter(Objects::nonNull)

@@ -1,8 +1,10 @@
 package fudge.service;
 
+import fudge.model.rating.AverageRating;
 import fudge.model.rating.Rating;
 import fudge.model.rating.RatingKey;
 import fudge.payload.RatingRequest;
+import fudge.repository.AverageRatingsRepository;
 import fudge.repository.RatingsRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.OptionalDouble;
 
 import static java.lang.Math.toIntExact;
@@ -22,19 +25,17 @@ import static java.lang.Math.toIntExact;
 @Slf4j
 public class RatingsServiceImpl implements RatingsService {
     private RatingsRepository ratingsRepository;
+    private AverageRatingsRepository averageRatingsRepository;
     private UserService userService;
 
     @Override
-    public List<Rating> getRatings(Integer movieId) {
-        return ratingsRepository.findAllByRatingKey_MovieId(movieId);
-    }
-
-    @Override
-    public Pair<Double, Integer> getAverageRatings(Integer movieId) {
+    public ResponseEntity<List<Rating>> getRatings(Integer movieId) {
         List<Rating> ratings = ratingsRepository.findAllByRatingKey_MovieId(movieId);
-        OptionalDouble optionalAverage = ratings.stream().mapToDouble(Rating::getRating).average();
-        Double average = optionalAverage.isPresent() ? optionalAverage.getAsDouble() : 0;
-        return Pair.of(average, ratings.size());
+        if (ratings.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(ratings);
+        }
     }
 
     @Override
@@ -49,4 +50,25 @@ public class RatingsServiceImpl implements RatingsService {
         return ResponseEntity.ok().build();
     }
 
+    @Override
+    public ResponseEntity<Pair<Double, Integer>> getAverageRatings(Integer movieId) {
+        List<Rating> ratings = ratingsRepository.findAllByRatingKey_MovieId(movieId);
+        OptionalDouble optionalAverage = ratings.stream().mapToDouble(Rating::getRating).average();
+        if (optionalAverage.isPresent()) {
+            return ResponseEntity.ok(Pair.of(optionalAverage.getAsDouble(), ratings.size()));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<Double> getAverageRating(Integer movieId) {
+        AverageRating averageRating = averageRatingsRepository.findOne(movieId);
+        if (Objects.isNull(averageRating)) {
+            return ResponseEntity.notFound().build();
+        }
+        else {
+            return ResponseEntity.ok(averageRating.getAverageRating());
+        }
+    }
 }

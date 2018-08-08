@@ -18,7 +18,7 @@ public class RatingsController {
     private RatingsService ratingsService;
 
     @GetMapping("/{movieId}")
-    public List<Rating> getRatings(@PathVariable Integer movieId) {
+    public ResponseEntity<List<Rating>> getRatings(@PathVariable Integer movieId) {
         return ratingsService.getRatings(movieId);
     }
 
@@ -28,7 +28,12 @@ public class RatingsController {
     }
 
     @GetMapping("/average/{movieId}")
-    public Pair<Double, Integer> getAverageRatings(@PathVariable Integer movieId) {
+    public ResponseEntity<Pair<Double, Integer>> getAverageRatings(@PathVariable Integer movieId) {
         return ratingsService.getAverageRatings(movieId);
+    }
+
+    @GetMapping("/averageRating/{movieId}")
+    public ResponseEntity<Double> getAverageRating(@PathVariable Integer movieId) {
+        return ratingsService.getAverageRating(movieId);
     }
 }

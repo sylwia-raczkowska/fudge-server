@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,10 @@ public class MovieServiceImpl implements MovieService {
 	private UserService userService;
 	private RatingsRepository ratingsRepository;
 	private static final String TRUE = "True";
+	private static final String APIKEY = "&apikey=";
+	private static final String BASE_URL = "http://www.omdbapi.com/?i=tt";
+	private static final String OMDB_KEY = "omdb.key";
+	private static final String ZEROS = "0000000";
 
 	@Override
 	public Page<Movie> getMovies(Pageable pageable) {
@@ -44,33 +49,25 @@ public class MovieServiceImpl implements MovieService {
 		return movieRepository.findAll(pageable);
 	}
 
-	@Override
-	public Movie getMovie(Integer movieId) {
-		Movie movie = movieRepository.findOne(movieId);
-		fillMovieRate(movie);
-		if (Objects.isNull(movie.getDetails())) {
-			setMovieDetails(movie);
-		}
-		return movie;
-	}
+    @Override
+    public ResponseEntity<Movie> getMovie(Integer movieId) {
+        Movie movie = movieRepository.findOne(movieId);
+
+        if (Objects.isNull(movie)) {
+            return ResponseEntity.notFound().build();
+        } else {
+            fillMovieRate(movie);
+            if (Objects.isNull(movie.getDetails())) {
+                setMovieDetails(movie);
+            }
+            return ResponseEntity.ok(movie);
+        }
+    }
 
     @Override
     public Page<Movie> findMoviesByTitle(String title, Pageable pageable) {
         return movieRepository.findByTitleIgnoreCaseContaining(title, pageable);
     }
-
-    @Override
-    public Movie getMovie(Integer movieId) {
-        Movie movie = movieRepository.findOne(movieId);
-        if (Objects.isNull(movie.getDetails()))
-            setMovieDetails(movie);
-        return movie;
-    }
-  
-	private static final String APIKEY = "&apikey=";
-	private static final String BASE_URL = "http://www.omdbapi.com/?i=tt";
-	private static final String OMDB_KEY = "omdb.key";
-	private static final String ZEROS = "0000000";
 
 	private void fillMovieRate(Movie movie) {
 		Long userId = null;

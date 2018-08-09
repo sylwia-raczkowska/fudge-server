@@ -1,10 +1,12 @@
 package fudge.service;
 
 import fudge.model.rating.AverageRating;
+import fudge.model.rating.PredictedRating;
 import fudge.model.rating.Rating;
 import fudge.model.rating.RatingKey;
 import fudge.payload.RatingRequest;
 import fudge.repository.AverageRatingsRepository;
+import fudge.repository.PredictedRatingsRepository;
 import fudge.repository.RatingsRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import static java.lang.Math.toIntExact;
 public class RatingsServiceImpl implements RatingsService {
     private RatingsRepository ratingsRepository;
     private AverageRatingsRepository averageRatingsRepository;
+    private PredictedRatingsRepository predictedRatingsRepository;
     private UserService userService;
 
     @Override
@@ -66,9 +69,21 @@ public class RatingsServiceImpl implements RatingsService {
         AverageRating averageRating = averageRatingsRepository.findOne(movieId);
         if (Objects.isNull(averageRating)) {
             return ResponseEntity.notFound().build();
-        }
-        else {
+        } else {
             return ResponseEntity.ok(averageRating.getAverageRating());
+        }
+    }
+
+    @Override
+    public ResponseEntity<Double> getPredictedRating(Integer movieId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId = userService.findIdByEmail(email);
+        RatingKey ratingKey = new RatingKey(toIntExact(userId), movieId);
+        PredictedRating predictedRating = predictedRatingsRepository.findOne(ratingKey);
+        if (Objects.isNull(predictedRating)) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(predictedRating.getRating());
         }
     }
 }

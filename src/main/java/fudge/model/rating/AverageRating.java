@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Data
-@Table(name = "averageMovieRating")
+@Table(name = "average_movie_rating")
 public class AverageRating {
     @Id
     private Integer movieId;

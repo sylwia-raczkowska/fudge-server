@@ -36,4 +36,9 @@ public class RatingsController {
     public ResponseEntity<Double> getAverageRating(@PathVariable Integer movieId) {
         return ratingsService.getAverageRating(movieId);
     }
+
+    @GetMapping("/predictedRating/{movieId}")
+    public ResponseEntity<Double> getPredictedRating(@PathVariable Integer movieId) {
+        return ratingsService.getPredictedRating(movieId);
+    }
 }

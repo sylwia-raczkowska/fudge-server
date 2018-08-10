@@ -9,6 +9,9 @@ spring:
     url: jdbc:postgresql://fudge.nazwa.pl:5432/fudge
     username: postgres
     password: cwaniakSQL12
+#    url: jdbc:postgresql://localhost:5432/fudge
+#    username: postgres
+#    password: qwerty
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true

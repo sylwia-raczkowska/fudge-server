@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.toIntExact;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @AllArgsConstructor
@@ -50,7 +52,7 @@ public class MovieServiceImpl implements MovieService {
         Page<Movie> page = movieRepository.findAll(pageable);
 
         page.forEach(movie -> {
-            if (Objects.isNull(movie.getDetails()))
+            if (isNull(movie.getDetails()))
                 setMovieDetails(movie);
         });
         return page;
@@ -60,11 +62,11 @@ public class MovieServiceImpl implements MovieService {
     public ResponseEntity<Movie> getMovie(Integer movieId) {
         Movie movie = movieRepository.findOne(movieId);
 
-        if (Objects.isNull(movie)) {
+        if (isNull(movie)) {
             return ResponseEntity.notFound().build();
         } else {
             fillMovieRate(movie);
-            if (Objects.isNull(movie.getDetails())) {
+            if (isNull(movie.getDetails())) {
                 setMovieDetails(movie);
             }
             return ResponseEntity.ok(movie);
@@ -74,7 +76,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public ResponseEntity<List<Movie>> getTop100Movies() {
         List<AverageRating> topAverageRatings = averageRatingsRepository.findTop100();
-        if (Objects.isNull(topAverageRatings)) {
+        if (isNull(topAverageRatings)) {
             ResponseEntity.notFound().build();
         }
         List<Movie> topMovies = topAverageRatings.stream()
@@ -83,7 +85,7 @@ public class MovieServiceImpl implements MovieService {
                 .map(HttpEntity::getBody)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        if (Objects.isNull(topMovies) || topMovies.isEmpty()) {
+        if (isNull(topMovies) || topMovies.isEmpty()) {
             ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(topMovies);
@@ -104,7 +106,7 @@ public class MovieServiceImpl implements MovieService {
         }
         Integer id = userId != null ? toIntExact(userId) : null;
         Rating rating = ratingsRepository.findAllByRatingKey(new RatingKey(id, movie.getMovieId()));
-        movie.setUserRate(rating != null ? rating.getRating() : null);
+        movie.setUserRate(nonNull(rating) ? rating.getRating() : null);
     }
 
     private void setMovieDetails(Movie movie) {

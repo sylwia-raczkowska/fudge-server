@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.OptionalDouble;
 
 import static java.lang.Math.toIntExact;
+import static java.util.Objects.isNull;
 
 @Service
 @AllArgsConstructor
@@ -67,7 +67,7 @@ public class RatingsServiceImpl implements RatingsService {
     @Override
     public ResponseEntity<Double> getAverageRating(Integer movieId) {
         AverageRating averageRating = averageRatingsRepository.findOne(movieId);
-        if (Objects.isNull(averageRating)) {
+        if (isNull(averageRating)) {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(averageRating.getAverageRating());
@@ -80,7 +80,7 @@ public class RatingsServiceImpl implements RatingsService {
         Long userId = userService.findIdByEmail(email);
         RatingKey ratingKey = new RatingKey(toIntExact(userId), movieId);
         PredictedRating predictedRating = predictedRatingsRepository.findOne(ratingKey);
-        if (Objects.isNull(predictedRating)) {
+        if (isNull(predictedRating)) {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(predictedRating.getRating());

@@ -15,4 +15,6 @@ public interface RatingsService {
     ResponseEntity<Pair<Double, Integer>> getAverageRatings(Integer movieId);
 
     ResponseEntity<Double> getAverageRating(Integer movieId);
+
+    ResponseEntity<Double> getPredictedRating(Integer movieId);
 }

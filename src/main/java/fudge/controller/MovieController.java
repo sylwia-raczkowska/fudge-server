@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/movies")
 @AllArgsConstructor
@@ -30,5 +32,10 @@ public class MovieController {
     @GetMapping("/{movieId}")
     public ResponseEntity<Movie> getMovie(@PathVariable Integer movieId) {
         return movieService.getMovie(movieId);
+    }
+
+    @GetMapping("/top100")
+    public ResponseEntity<List<Movie>> getTop100Movies() {
+        return movieService.getTop100Movies();
     }
 }

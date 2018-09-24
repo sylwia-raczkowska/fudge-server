@@ -6,12 +6,9 @@ spring:
     name: testLatticeApp
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://fudge.nazwa.pl:5432/fudge
+    url: jdbc:postgresql://host.docker.internal:5432/fudge
     username: postgres
-    password: cwaniakSQL12
-#    url: jdbc:postgresql://localhost:5432/fudge
-#    username: postgres
-#    password: qwerty
+    password: qwerty
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
